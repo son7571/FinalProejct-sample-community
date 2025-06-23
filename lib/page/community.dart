@@ -1,3 +1,4 @@
+import 'package:community/data/dummy_posts.dart';
 import 'package:flutter/material.dart';
 
 class Community extends StatefulWidget {
@@ -18,12 +19,13 @@ class _CommunityState extends State<Community> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text('커뮤니티', style: TextStyle(color: Colors.black)),
+        centerTitle: true,
         backgroundColor: Colors.white,
+        elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {},
         ),
-        elevation: 0,
       ),
       body: Column(
         children: [
@@ -34,30 +36,32 @@ class _CommunityState extends State<Community> {
               scrollDirection: Axis.horizontal,
               itemCount: teamTabs.length,
               itemBuilder: (context, index) {
-                final isSelected = selectedTeamIndex == index;
-                return Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
-                  child: Column(
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        backgroundColor: isSelected ? Colors.black : Colors.grey[300],
-                        child: FittedBox(
-                          child: Text(
-                            teamTabs[index][0],
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black,
-                            ),
-                          ),
-                        ),
+                final isFirst = index == 0;
+                return Column(
+                  children: [
+                    Container(
+                      margin: EdgeInsets.symmetric(horizontal: 8),
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: isFirst ? Colors.tealAccent[700] : Colors.grey.shade300,
+                        shape: BoxShape.circle,
                       ),
-                      const SizedBox(height: 6),
-                      Text(
-                        teamTabs[index],
-                        style: TextStyle(fontSize: 12),
+                      child: Center(
+                        child: isFirst
+                            ? Text(
+                                'All',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : Icon(Icons.image_outlined), // 또는 NetworkImage 등으로 대체 가능
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 4),
+                    Text(teamTabs[index]),
+                  ],
                 );
               },
             ),
@@ -72,16 +76,48 @@ class _CommunityState extends State<Community> {
           // 게시글 목록 (샘플 박스)
           Expanded(
             child: ListView.builder(
-              itemCount: 5,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemBuilder: (context, index) => Container(
-                height: 80,
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
+              itemCount: dummyPosts.length,
+              itemBuilder: (context, i) {
+                final post = dummyPosts[i];
+                return Card(
+                  color: Colors.white,
+                  elevation: 2,
+                  margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // 상단: 작성자 + 시간
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(post.username, style: TextStyle(fontWeight: FontWeight.bold)),
+                            Text(post.timeAgo, style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        // 내용
+                        Text(post.content, style: TextStyle(fontSize: 16)),
+                        const SizedBox(height: 12),
+                        // 하단: 좋아요 + 댓글
+                        Row(
+                          children: [
+                            Icon(Icons.favorite_border, size: 20),
+                            SizedBox(width: 4),
+                            Text('${post.likes}'),
+                            SizedBox(width: 16),
+                            Icon(Icons.mode_comment_outlined, size: 20),
+                            SizedBox(width: 4),
+                            Text('${post.comments}'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
         ],
@@ -90,21 +126,12 @@ class _CommunityState extends State<Community> {
       // Floating Action Button (글쓰기)
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
-        backgroundColor: Colors.black,
-        child: const Icon(Icons.edit),
-      ),
-
-      // Bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.sports_baseball), label: '예측'),
-          BottomNavigationBarItem(icon: Icon(Icons.today), label: '오늘의경기'),
-          BottomNavigationBarItem(icon: Icon(Icons.edit_note), label: '기록'),
-          BottomNavigationBarItem(icon: Icon(Icons.people), label: '동행'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: '마이페이지'),
-        ],
+        backgroundColor: Colors.tealAccent[700],
+        shape: CircleBorder(),
+        child: const Icon(
+          Icons.edit_square,
+          color: Colors.white,
+        ),
       ),
     );
   }
